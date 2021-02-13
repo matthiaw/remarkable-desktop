@@ -3,6 +3,7 @@ package org.rogatio.remarkable.desktop.views;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.rogatio.remarkable.api.RemarkableManager;
 import org.rogatio.remarkable.api.io.PropertiesCache;
@@ -22,6 +23,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -110,6 +112,15 @@ public class HomePresenter {
 	private void addNavHome() {
 		addNavSingle();
 
+		appBar.getActionItems().add(MaterialDesignIcon.FOLDER_SPECIAL.button(e -> {
+			TextInputDialog dialog = new TextInputDialog("Foldername");
+			dialog.setTitle("Create Folder");
+			dialog.setHeaderText("Folder creation dialog");
+			dialog.setContentText("Enter folder name:");
+			Optional<String> result = dialog.showAndWait();
+			result.ifPresent(name -> RemarkableManager.getInstance().createDir(name));
+		}));
+		
 		appBar.getActionItems().add(MaterialDesignIcon.GRID_ON.button(e -> {
 			RemarkableManager.getInstance().downloadTemplates();
 		}));
