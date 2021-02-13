@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.gluonhq.charm.glisten.mvc.View?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<View fx:id="register" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" stylesheets="@register.css" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.rogatio.remarkable.desktop.views.RegisterPresenter">
+	<center>
+		<VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+			<children>
+            <HBox alignment="CENTER" prefHeight="40.0" prefWidth="50.0">
+               <children>
+      				<!-- <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Register Device"> 
+      					<font> <Font size="24.0" /> </font> <VBox.margin> <Insets bottom="10.0" /> 
+            					</VBox.margin> </Text> -->
+      				<Label text="Enter One Time Code from">
+                     <HBox.margin>
+                        <Insets right="5.0" />
+                     </HBox.margin>
+                     <padding>
+                        <Insets bottom="3.0" top="3.0" />
+                     </padding>
+                  </Label>
+      				<Hyperlink fx:id="registerDeviceLink" text="https://my.remarkable.com/connect/desktop">
+                     <padding>
+                        <Insets bottom="3.0" top="3.0" />
+                     </padding>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </Hyperlink>
+               </children>
+               <VBox.margin>
+                  <Insets left="25.0" right="25.0" />
+               </VBox.margin>
+            </HBox>
+				<TextField fx:id="onetimecode">
+               <padding>
+                  <Insets left="25.0" right="25.0" />
+               </padding>
+               <VBox.margin>
+                  <Insets left="25.0" right="25.0" />
+               </VBox.margin></TextField>
+				<ButtonBar prefHeight="40.0" prefWidth="200.0">
+					<buttons>
+						<Button mnemonicParsing="false" onAction="#buttonCanceled" text="Cancel" />
+						<Button mnemonicParsing="false" onAction="#buttonOk" text="Ok" />
+					</buttons>
+               <padding>
+                  <Insets left="25.0" right="25.0" />
+               </padding>
+				</ButtonBar>
+			</children>
+		</VBox>
+	</center>
+</View>
