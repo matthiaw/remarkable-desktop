@@ -1,3 +1,20 @@
+/*
+ * Remarkable Desktop - Copyright (C) 2021 Matthias Wegner
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
 package org.rogatio.remarkable.desktop;
 
 import java.awt.Desktop;
@@ -36,8 +53,16 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.VBox;
 
+/**
+ * The Class DrawerManager.
+ */
 public class DrawerManager {
 
+	/**
+	 * Builds the drawer.
+	 *
+	 * @param app the app
+	 */
 	public static void buildDrawer(MobileApplication app) {
 		NavigationDrawer drawer = app.getDrawer();
 
@@ -62,6 +87,12 @@ public class DrawerManager {
 		}
 	}
 
+	/**
+	 * Sets the view title.
+	 *
+	 * @param view the view
+	 * @param fxview the fxview
+	 */
 	public static void setViewTitle(View view, FxView fxview) {
 		view.showingProperty().addListener((obs, oldValue, newValue) -> {
 			if (newValue) {
@@ -71,11 +102,17 @@ public class DrawerManager {
 		});
 	}
 
+	/**
+	 * Creates the download icon.
+	 *
+	 * @param type the type
+	 * @param tooltipText the tooltip text
+	 * @return the node
+	 */
 	public static Node createDownloadIcon(String type, String tooltipText) {
 		VBox stack = new VBox();
 		Label label = new Label(type);
 		label.setStyle("-fx-text-fill: white;");
-		//label.setPadding(new Insets(4, 0, 4, 0));
 		stack.getChildren().add(label);
 		Node i = MaterialDesignIcon.FILE_DOWNLOAD.graphic();
 		i.setStyle("-fx-text-fill: white;");
@@ -85,11 +122,15 @@ public class DrawerManager {
 		tooltip.setText(tooltipText);
 		Tooltip.install(stack, tooltip);
 		
-//		stack.setSpacing(2);
-		
 		return stack;
 	}
 
+	/**
+	 * File opener.
+	 *
+	 * @param node the node
+	 * @param file the file
+	 */
 	public static void fileOpener(Node node, File file) {
 		node.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
@@ -109,6 +150,12 @@ public class DrawerManager {
 		});
 	}
 
+	/**
+	 * Sets the hyperlink on click.
+	 *
+	 * @param link the link
+	 * @param url the url
+	 */
 	public static void setHyperlinkOnClick(Hyperlink link, String url) {
 		link.setBorder(Border.EMPTY);
 		link.setPadding(new Insets(4, 0, 4, 0));
@@ -127,10 +174,22 @@ public class DrawerManager {
 		});
 	}
 
+	/**
+	 * Switch view.
+	 *
+	 * @param view the view
+	 */
 	public static void switchView(FxView view) {
 		MobileApplication.getInstance().switchView(view.getFxml());
 	}
 
+	/**
+	 * Creates the image view.
+	 *
+	 * @param imageFile the image file
+	 * @param size the size
+	 * @return the image view
+	 */
 	public static ImageView createImageView(File imageFile, int size) {
 		try {
 			Image image = new Image(new FileInputStream(imageFile), 0, size, true, true);

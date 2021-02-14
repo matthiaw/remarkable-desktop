@@ -1,3 +1,20 @@
+/*
+ * Remarkable Desktop - Copyright (C) 2021 Matthias Wegner
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
 package org.rogatio.remarkable.desktop.views;
 
 import java.io.File;
@@ -30,19 +47,29 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.TilePane;
 
+/**
+ * The Class HomePresenter.
+ */
 public class HomePresenter {
 
+	/** The home. */
 	@FXML
 	private View home;
 
+	/** The image pane. */
 	@FXML
 	private TilePane imagePane;
 
+	/** The back button node. */
 	private Button backButtonNode = MaterialDesignIcon.ARROW_BACK.button();
 
+	/** The app bar. */
 	private AppBar appBar = MobileApplication.getInstance().getAppBar();
 	
 	
+	/**
+	 * Initialize.
+	 */
 	public void initialize() {
 		DrawerManager.setViewTitle(home, FxView.HOME);
 
@@ -60,6 +87,11 @@ public class HomePresenter {
 		addNotebooks();
 	}
 
+	/**
+	 * Adds the nav single.
+	 *
+	 * @param content the content
+	 */
 	private void addNavSingle(Content content) {
 		appBar.getActionItems().clear();
 		backButtonNode.setDisable(true);
@@ -70,6 +102,11 @@ public class HomePresenter {
 		appBar.getActionItems().add(pdf);	
 	}
 	
+	/**
+	 * Adds the nav single.
+	 *
+	 * @param page the page
+	 */
 	private void addNavSingle(Page page) {
 		appBar.getActionItems().clear();
 		backButtonNode.setDisable(true);
@@ -88,6 +125,13 @@ public class HomePresenter {
 		appBar.getActionItems().add(pdf);	
 	}
 	
+	/**
+	 * Export file.
+	 *
+	 * @param content the content
+	 * @param extension the extension
+	 * @return the string
+	 */
 	private String exportFile(Content content, String extension) {
 		String EXPORTFOLDER = PropertiesCache.getInstance().getValue(PropertiesCache.EXPORTFOLDER);
 
@@ -103,12 +147,18 @@ public class HomePresenter {
 		
 	}
 	
+	/**
+	 * Adds the nav single.
+	 */
 	private void addNavSingle() {
 		appBar.getActionItems().clear();
 		backButtonNode.setDisable(true);
 		appBar.getActionItems().add(backButtonNode);
 	}
 	
+	/**
+	 * Adds the nav home.
+	 */
 	private void addNavHome() {
 		addNavSingle();
 
@@ -137,10 +187,16 @@ public class HomePresenter {
 
 	}
 
+	/**
+	 * Clear view.
+	 */
 	private void clearView() {
 		imagePane.getChildren().clear();
 	}
 
+	/**
+	 * Adds the folders.
+	 */
 	private void addFolders() {
 		RemarkableManager rm = RemarkableManager.getInstance();
 
@@ -155,6 +211,9 @@ public class HomePresenter {
 
 	}
 
+	/**
+	 * Adds the notebooks.
+	 */
 	private void addNotebooks() {
 		RemarkableManager rm = RemarkableManager.getInstance();
 
@@ -175,6 +234,12 @@ public class HomePresenter {
 		imagePane.getChildren().addAll(images);
 	}
 
+	/**
+	 * Creates the notebook image.
+	 *
+	 * @param content the content
+	 * @return the labeled image
+	 */
 	private LabeledImage createNotebookImage(Content content) {
 		
 		String folders = content.getFolders().toString();
@@ -194,6 +259,11 @@ public class HomePresenter {
 		return img;
 	}
 	
+	/**
+	 * Adds the notebook.
+	 *
+	 * @param notebook the notebook
+	 */
 	private void addNotebook(Content notebook) {
 
 		addNavSingle(notebook);
@@ -222,6 +292,12 @@ public class HomePresenter {
 		imagePane.getChildren().addAll(pages);
 	}
 	
+	/**
+	 * Creates the page image.
+	 *
+	 * @param page the page
+	 * @return the labeled image
+	 */
 	private LabeledImage createPageImage(Page page) {
 		LabeledImage img = new LabeledImage("Page " + page.getPageNumber(), page.getThumbnail(), 150);
 
