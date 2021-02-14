@@ -20,6 +20,7 @@
 		<buildDirectory>${project.basedir}/target</buildDirectory>
 		<mainClassName>org.rogatio.remarkable.desktop.Application</mainClassName>
 		<mainLauncherClassName>org.rogatio.remarkable.desktop.Launcher</mainLauncherClassName>
+		<jarPrefix>jar-with-dependencies</jarPrefix>
 	</properties>
 
 	<dependencies>
@@ -38,6 +39,12 @@
 			<artifactId>javafx-fxml</artifactId>
 			<version>${javafx.version}</version>
 		</dependency>
+		<!-- <dependency> <groupId>org.openjfx</groupId> <artifactId>javafx-graphics 
+			</artifactId> <version>11</version> <classifier>win</classifier> </dependency> 
+			<dependency> <groupId>org.openjfx</groupId> <artifactId>javafx-graphics </artifactId> 
+			<version>11</version> <classifier>linux</classifier> </dependency> <dependency> 
+			<groupId>org.openjfx</groupId> <artifactId>javafx-graphics </artifactId> 
+			<version>11</version> <classifier>mac</classifier> </dependency> -->
 		<dependency>
 			<groupId>com.gluonhq</groupId>
 			<artifactId>charm-glisten</artifactId>
@@ -85,6 +92,7 @@
 					<include>**/*.fxml</include>
 					<include>**/*.css</include>
 					<include>**/*.png</include>
+					<include>log4j2.xml</include>
 				</includes>
 			</resource>
 		</resources>
@@ -118,14 +126,92 @@
 						<list>storage</list>
 					</attachList>
 					<bundlesList>
-						<list>org.rogatio.remarkable.desktop.views.primary</list>
-						<list>org.rogatio.remarkable.desktop.views.secondary</list>
+						<list>org.rogatio.remarkable.desktop.views.home</list>
+						<list>org.rogatio.remarkable.desktop.views.settings</list>
+						<list>org.rogatio.remarkable.desktop.views.register</list>
 					</bundlesList>
 					<reflectionList>
-						<list>org.rogatio.remarkable.desktop.views.PrimaryPresenter</list>
-						<list>org.rogatio.remarkable.desktop.views.SecondaryPresenter</list>
+						<list>org.rogatio.remarkable.desktop.views.HomePresenter</list>
+						<list>org.rogatio.remarkable.desktop.views.SettingsPresenter</list>
+						<list>org.rogatio.remarkable.desktop.views.RegisterPresenter</list>
+						<list>javafx.application.Application</list>
+						<list>javafx.fxml.FXMLLoader</list>
+						<list>com.sun.javafx.tk.Toolkit</list>
+						<list>com.sun.javafx.util.ModuleHelper</list>
+						<list>com.sun.javafx.application.LauncherImpl</list>
+						<list>com.sun.javafx.application.PlatformImpl</list>
+						<list>org.rogatio.remarkable.desktop.Application</list>
 					</reflectionList>
 					<mainClass>${mainLauncherClassName}</mainClass>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.2.3</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<outputFile>target\${project.artifactId}.jar</outputFile>
+							<transformers>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<mainClass>org.rogatio.remarkable.desktop.Launcher</mainClass>
+									<manifestEntries>
+										<Multi-Release>true</Multi-Release>
+									</manifestEntries>
+								</transformer>
+							</transformers>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<phase>install</phase>
+						<configuration>
+							<target>
+								<copy
+									file="${buildDirectory}/${project.artifactId}-${project.version}-${jarPrefix}.jar"
+									tofile="${project.artifactId}.jar" />
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>3.3.0</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>org.rogatio.remarkable.desktop.Application</mainClass>
+						</manifest>
+					</archive>
+					<descriptorRefs>
+						<descriptorRef>${jarPrefix}</descriptorRef>
+					</descriptorRefs>
 				</configuration>
 			</plugin>
 		</plugins>
