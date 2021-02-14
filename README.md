@@ -11,7 +11,6 @@ Building requires Java 11. OpenJFX is downloaded via Maven so no need to install
  ```
  $ mvn clean install
  $ mvn clean package
- $ mvn javafx:run
  ```
 
 # Run
