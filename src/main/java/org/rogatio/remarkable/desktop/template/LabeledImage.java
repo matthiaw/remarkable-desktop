@@ -18,12 +18,19 @@
 package org.rogatio.remarkable.desktop.template;
 
 import java.io.File;
+import java.io.FileInputStream;
 
 import org.rogatio.remarkable.desktop.DrawerManager;
 
+import com.gluonhq.charm.glisten.visual.MaterialDesignIcon;
+
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
@@ -38,22 +45,22 @@ public class LabeledImage extends VBox {
 
 	/** The title. */
 	private final Label title = new Label();
-	
+
 	/** The sub title. */
 	private final Label subTitle = new Label();
-	
+
 	/** The thumb. */
 	private ImageView thumb = new ImageView();
-	
+
 	/** The size. */
 	private int size = 0;
-	
+
 	/**
 	 * Instantiates a new labeled image.
 	 *
 	 * @param titleString the title string
-	 * @param thumb the thumb
-	 * @param size the size
+	 * @param thumb       the thumb
+	 * @param size        the size
 	 */
 	public LabeledImage(String titleString, File thumb, int size) {
 		setTitle(titleString);
@@ -62,14 +69,14 @@ public class LabeledImage extends VBox {
 		this.thumb = DrawerManager.createImageView(thumb, size);
 		init();
 	}
-	
+
 	/**
 	 * Instantiates a new labeled image.
 	 *
 	 * @param titleString the title string
-	 * @param subString the sub string
-	 * @param thumb the thumb
-	 * @param size the size
+	 * @param subString   the sub string
+	 * @param thumb       the thumb
+	 * @param size        the size
 	 */
 	public LabeledImage(String titleString, String subString, File thumb, int size) {
 		setTitle(titleString);
@@ -109,12 +116,29 @@ public class LabeledImage extends VBox {
 		box.setMaxWidth(size);
 		box.setMaxHeight(size);
 		box.setBorder(new Border(
-		new BorderStroke(Color.LIGHTGRAY, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderStroke.THIN)));
-		box.getChildren().add(thumb);
+				new BorderStroke(Color.LIGHTGRAY, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderStroke.THIN)));
+		if (thumb != null) {
+			box.getChildren().add(thumb);
+		} else {
+			box.getChildren().add(MaterialDesignIcon.EMPTY.graphic());
+		}
 		this.getChildren().add(box);
 
 		this.getChildren().add(title);
 		this.getChildren().add(subTitle);
+		
+		this.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent mouseEvent) {
+				if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+					clicked();
+				}
+			}
+		});
+	}
+	
+	public void clicked() {
+		
 	}
 
 }

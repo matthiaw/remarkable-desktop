@@ -39,6 +39,9 @@ import javafx.stage.Stage;
  */
 public class Application extends MobileApplication {
 
+	// TODO Add logger as panel
+	// TODO Create Thumbnails without export
+	
 	/**
 	 * Overwrite log4j2 configuration.
 	 */

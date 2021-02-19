@@ -63,10 +63,9 @@ public class HomePresenter {
 	/** The back button node. */
 	private Button backButtonNode = MaterialDesignIcon.ARROW_BACK.button();
 
-	/** The app bar. */
+	/** The application bar. */
 	private AppBar appBar = MobileApplication.getInstance().getAppBar();
-	
-	
+
 	/**
 	 * Initialize.
 	 */
@@ -88,7 +87,7 @@ public class HomePresenter {
 	}
 
 	/**
-	 * Adds the nav single.
+	 * Adds the navigation bar of a single notebook
 	 *
 	 * @param content the content
 	 */
@@ -96,14 +95,14 @@ public class HomePresenter {
 		appBar.getActionItems().clear();
 		backButtonNode.setDisable(true);
 		appBar.getActionItems().add(backButtonNode);
-		
-		Node pdf = DrawerManager.createDownloadIcon("PDF","Download PDF of '"+content.getName()+"'");
-		DrawerManager.fileOpener(pdf, new File(exportFile(content ,"pdf")));
-		appBar.getActionItems().add(pdf);	
+
+		Node pdf = DrawerManager.createDownloadIcon("PDF", "Download PDF of '" + content.getName() + "'");
+		DrawerManager.fileOpener(pdf, new File(exportFile(content, "pdf")));
+		appBar.getActionItems().add(pdf);
 	}
-	
+
 	/**
-	 * Adds the nav single.
+	 * Adds the navigation bar for a single page.
 	 *
 	 * @param page the page
 	 */
@@ -111,24 +110,61 @@ public class HomePresenter {
 		appBar.getActionItems().clear();
 		backButtonNode.setDisable(true);
 		appBar.getActionItems().add(backButtonNode);
-		
-		Node svg = DrawerManager.createDownloadIcon("SVG", "Download SVG of Page "+page.getPageNumber());
+
+		Button pageLeft = MaterialDesignIcon.KEYBOARD_ARROW_LEFT.button();
+		pageLeft.setTooltip(new Tooltip("Page " + (page.getPageNumber() - 1)));
+		pageLeft.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent mouseEvent) {
+				if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+					if (page.getPageNumber() - 1 >= 0) {
+						drawPage(page.getNotebook().getPage(page.getPageNumber() - 1));
+					} else {
+						pageLeft.setDisable(true);
+					}
+				}
+			}
+		});
+		appBar.getActionItems().add(pageLeft);
+
+		Button pageRight = MaterialDesignIcon.KEYBOARD_ARROW_RIGHT.button();
+		pageRight.setTooltip(new Tooltip("Page " + (page.getPageNumber() + 1)));
+		pageRight.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent mouseEvent) {
+				if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+
+					if (page.getPageNumber() + 1 < page.getNotebook().getPages().size()) {
+						try {
+							drawPage(page.getNotebook().getPage(page.getPageNumber() + 1));
+						} catch (Exception e) {
+						}
+					} else {
+						pageRight.setDisable(true);
+					}
+
+				}
+			}
+		});
+		appBar.getActionItems().add(pageRight);
+
+		Node svg = DrawerManager.createDownloadIcon("SVG", "Download SVG of Page " + page.getPageNumber());
 		DrawerManager.fileOpener(svg, new File(Util.getFilename(page, "svg")));
 		appBar.getActionItems().add(svg);
-		
-		Node png = DrawerManager.createDownloadIcon("PNG","Download PNG of Page "+page.getPageNumber());
+
+		Node png = DrawerManager.createDownloadIcon("PNG", "Download PNG of Page " + page.getPageNumber());
 		DrawerManager.fileOpener(png, new File(Util.getFilename(page, "png")));
 		appBar.getActionItems().add(png);
-		
-		Node pdf = DrawerManager.createDownloadIcon("PDF","Download PDF of Page "+page.getPageNumber());
+
+		Node pdf = DrawerManager.createDownloadIcon("PDF", "Download PDF of Page " + page.getPageNumber());
 		DrawerManager.fileOpener(pdf, new File(Util.getFilename(page, "pdf")));
-		appBar.getActionItems().add(pdf);	
+		appBar.getActionItems().add(pdf);
 	}
-	
+
 	/**
 	 * Export file.
 	 *
-	 * @param content the content
+	 * @param content   the content
 	 * @param extension the extension
 	 * @return the string
 	 */
@@ -143,10 +179,10 @@ public class HomePresenter {
 			File ff = new File(EXPORTFOLDER + File.separatorChar + folders);
 			ff.mkdirs();
 		}
-		return EXPORTFOLDER + File.separatorChar + folders + content.getName() + "."+extension;
-		
+		return EXPORTFOLDER + File.separatorChar + folders + content.getName() + "." + extension;
+
 	}
-	
+
 	/**
 	 * Adds the nav single.
 	 */
@@ -155,9 +191,9 @@ public class HomePresenter {
 		backButtonNode.setDisable(true);
 		appBar.getActionItems().add(backButtonNode);
 	}
-	
+
 	/**
-	 * Adds the nav home.
+	 * Adds the navigation bat of the home site, all notebooks.
 	 */
 	private void addNavHome() {
 		addNavSingle();
@@ -170,19 +206,21 @@ public class HomePresenter {
 			Optional<String> result = dialog.showAndWait();
 			result.ifPresent(name -> RemarkableManager.getInstance().createDir(name));
 		}));
-		
+
 		appBar.getActionItems().add(MaterialDesignIcon.GRID_ON.button(e -> {
 			RemarkableManager.getInstance().downloadTemplates();
 		}));
 
 		appBar.getActionItems().add(MaterialDesignIcon.ARCHIVE.button(e -> {
 			RemarkableManager.getInstance().exportNotebooks();
+			addNotebooks();
 		}));
 
 		appBar.getActionItems().add(MaterialDesignIcon.REFRESH.button(e -> {
 			RemarkableManager.getInstance().readNotebookMetaDatas();
 			RemarkableManager.getInstance().downloadContents();
 			RemarkableManager.getInstance().readContents();
+			addNotebooks();
 		}));
 
 	}
@@ -241,24 +279,21 @@ public class HomePresenter {
 	 * @return the labeled image
 	 */
 	private LabeledImage createNotebookImage(Content content) {
-		
+
 		String folders = content.getFolders().toString();
 		folders = folders.replace("[", "").replace("]", "").replace(",", "/");
-		
-		LabeledImage img = new LabeledImage(content.getName(), folders, content.getThumbnail(), 150);
 
-		img.setOnMouseClicked(new EventHandler<MouseEvent>() {
+		LabeledImage img = new LabeledImage(content.getName(), folders, content.getThumbnail(), 150) {
 			@Override
-			public void handle(MouseEvent mouseEvent) {
-				if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-					appBar.setTitleText(content.getName());
-					addNotebook(content);
-				}
+			public void clicked() {
+				appBar.setTitleText(content.getName());
+				addNotebook(content);
 			}
-		});
+		};
+
 		return img;
 	}
-	
+
 	/**
 	 * Adds the notebook.
 	 *
@@ -270,6 +305,7 @@ public class HomePresenter {
 		clearView();
 
 		backButtonNode.setDisable(false);
+		backButtonNode.setTooltip(new Tooltip("All Notebooks"));
 		backButtonNode.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent mouseEvent) {
@@ -291,7 +327,7 @@ public class HomePresenter {
 
 		imagePane.getChildren().addAll(pages);
 	}
-	
+
 	/**
 	 * Creates the page image.
 	 *
@@ -299,36 +335,37 @@ public class HomePresenter {
 	 * @return the labeled image
 	 */
 	private LabeledImage createPageImage(Page page) {
-		LabeledImage img = new LabeledImage("Page " + page.getPageNumber(), page.getThumbnail(), 150);
+		LabeledImage img = new LabeledImage("Page " + page.getPageNumber(), page.getThumbnail(), 150) {
+			@Override
+			public void clicked() {
+				drawPage(page);
+			}
+		};
 
-		img.setOnMouseClicked(new EventHandler<MouseEvent>() {
+		return img;
+	}
+
+	public void drawPage(Page page) {
+		appBar.setTitleText(page.getNotebook().getName() + " - Page " + page.getPageNumber());
+
+		addNavSingle(page);
+
+		File imgFile = page.getPng();
+		ImageView iv = DrawerManager.createImageView(imgFile, 750);
+
+		imagePane.getChildren().clear();
+		imagePane.getChildren().add(iv);
+
+		backButtonNode.setDisable(false);
+		backButtonNode.setTooltip(new Tooltip("Notebook " + (page.getNotebook().getName())));
+		backButtonNode.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent mouseEvent) {
 				if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-
-					appBar.setTitleText(page.getNotebook().getName() + " - Page " + page.getPageNumber());
-
-					addNavSingle(page);
-					
-					File imgFile = page.getPng();
-					ImageView iv = DrawerManager.createImageView(imgFile, 750);
-
-					imagePane.getChildren().clear();
-					imagePane.getChildren().add(iv);
-
-					backButtonNode.setDisable(false);
-					backButtonNode.setOnMouseClicked(new EventHandler<MouseEvent>() {
-						@Override
-						public void handle(MouseEvent mouseEvent) {
-							if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-								addNotebook(page.getNotebook());
-							}
-						}
-					});
+					addNotebook(page.getNotebook());
 				}
 			}
 		});
-		return img;
 	}
 
 }

@@ -66,7 +66,8 @@ public class DrawerManager {
 	public static void buildDrawer(MobileApplication app) {
 		NavigationDrawer drawer = app.getDrawer();
 
-		NavigationDrawer.Header header = new NavigationDrawer.Header("Remarkable Desktop", "A remarkable client",
+		NavigationDrawer.Header header = new NavigationDrawer.Header("Remarkable Desktop",
+				"A simple client for the remarkable device",
 				new Avatar(21, new Image(DrawerManager.class.getResourceAsStream("/icon.png"))));
 		drawer.setHeader(header);
 
@@ -90,7 +91,7 @@ public class DrawerManager {
 	/**
 	 * Sets the view title.
 	 *
-	 * @param view the view
+	 * @param view   the view
 	 * @param fxview the fxview
 	 */
 	public static void setViewTitle(View view, FxView fxview) {
@@ -105,7 +106,7 @@ public class DrawerManager {
 	/**
 	 * Creates the download icon.
 	 *
-	 * @param type the type
+	 * @param type        the type
 	 * @param tooltipText the tooltip text
 	 * @return the node
 	 */
@@ -117,11 +118,11 @@ public class DrawerManager {
 		Node i = MaterialDesignIcon.FILE_DOWNLOAD.graphic();
 		i.setStyle("-fx-text-fill: white;");
 		stack.getChildren().add(i);
-		
+
 		Tooltip tooltip = new Tooltip();
 		tooltip.setText(tooltipText);
 		Tooltip.install(stack, tooltip);
-		
+
 		return stack;
 	}
 
@@ -154,7 +155,7 @@ public class DrawerManager {
 	 * Sets the hyperlink on click.
 	 *
 	 * @param link the link
-	 * @param url the url
+	 * @param url  the url
 	 */
 	public static void setHyperlinkOnClick(Hyperlink link, String url) {
 		link.setBorder(Border.EMPTY);
@@ -187,22 +188,24 @@ public class DrawerManager {
 	 * Creates the image view.
 	 *
 	 * @param imageFile the image file
-	 * @param size the size
+	 * @param size      the size
 	 * @return the image view
 	 */
 	public static ImageView createImageView(File imageFile, int size) {
-		try {
-			Image image = new Image(new FileInputStream(imageFile), 0, size, true, true);
+		if (imageFile != null) {
+			try {
+				Image image = new Image(new FileInputStream(imageFile), 0, size, true, true);
 
-			if (image.getHeight() > image.getWidth()) {
-				image = new Image(new FileInputStream(imageFile), size, 0, true, true);
+				if (image.getHeight() > image.getWidth()) {
+					image = new Image(new FileInputStream(imageFile), size, 0, true, true);
+				}
+				ImageView imageView = new ImageView(image);
+				imageView.setFitWidth(image.getWidth());
+
+				return imageView;
+
+			} catch (FileNotFoundException e) {
 			}
-			ImageView imageView = new ImageView(image);
-			imageView.setFitWidth(image.getWidth());
-
-			return imageView;
-
-		} catch (FileNotFoundException e) {
 		}
 		return null;
 	}
