@@ -43,15 +43,18 @@ import com.gluonhq.charm.glisten.visual.MaterialDesignIcon;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
@@ -277,8 +280,6 @@ public class HomePresenter {
 	 */
 	private void clearView() {
 		imagePane.getChildren().clear();
-//		VBox.setVgrow(home, Priority.ALWAYS);
-//		VBox.setVgrow(imagePane, Priority.ALWAYS);	
 	}
 
 	/**
@@ -399,6 +400,7 @@ public class HomePresenter {
 
 		addNavSingle(page);
 
+		// add toggle view button
 		if (toggleView) {
 			fab = new FloatingActionButton(MaterialDesignIcon.ZOOM_OUT.text, e -> {
 				toggleView = !toggleView;
@@ -410,8 +412,9 @@ public class HomePresenter {
 				drawPage(page);
 			});
 		}
+
 		fab.show();
-		
+
 		File imgFile = page.getPng();
 
 		if (imgFile == null) {
@@ -426,14 +429,19 @@ public class HomePresenter {
 
 		ImageView iv = DrawerManager.createImageView(imgFile, 750);
 
+		// toggle image view
 		if (toggleView) {
 			iv.fitWidthProperty().bind(imagePane.widthProperty());
-//			iv.fitHeightProperty().bind(imagePane.heightProperty());
 		} else {
 			iv.fitWidthProperty().bind(home.widthProperty());
-			iv.fitHeightProperty().bind(home.heightProperty());	
+			iv.fitHeightProperty().bind(home.heightProperty());
 		}
 
+//		BorderPane pane = new BorderPane();
+//		pane.setLeft(new Label("Left"));
+//		pane.setCenter(iv);
+//		pane.setRight(new Label("Right"));
+		
 		imagePane.getChildren().clear();
 		imagePane.getChildren().add(iv);
 
