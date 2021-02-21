@@ -6,18 +6,22 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.TextFlow?>
 
 <View fx:id="home" maxHeight="-Infinity" maxWidth="-Infinity"
-	minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0"
-	prefWidth="1024.0" stylesheets="@home.css"
+	minHeight="-Infinity" minWidth="-Infinity" prefHeight="668.0"
+	prefWidth="1004.0" stylesheets="@home.css"
 	xmlns="http://javafx.com/javafx/15.0.1"
 	xmlns:fx="http://javafx.com/fxml/1"
 	fx:controller="org.rogatio.remarkable.desktop.views.HomePresenter">
+	<left>
+		<!-- <Label text="LEFT" /> -->
+	</left>
 	<center>
-		<ScrollPane prefHeight="768.0" prefWidth="1014.0"
+		<ScrollPane prefHeight="668.0" prefWidth="1004.0"
 			BorderPane.alignment="CENTER">
 			<content>
-				<VBox alignment="CENTER" prefHeight="768.0" prefWidth="1024.0">
+				<VBox alignment="CENTER" prefHeight="658.0" prefWidth="1004.0">
 					<children>
 						<TilePane fx:id="imagePane" BorderPane.alignment="CENTER">
 							<children>
@@ -29,4 +33,20 @@
 			</content>
 		</ScrollPane>
 	</center>
+	<right>
+		<!-- <Label text="RIGHT" /> -->
+	</right>
+	<bottom>
+		<ScrollPane prefHeight="100.0" prefWidth="1004.0"
+			BorderPane.alignment="CENTER">
+			<content>
+				<VBox alignment="CENTER" prefHeight="100.0" prefWidth="1004.0">
+					<children>
+						<TextFlow fx:id="textPane" prefHeight="100.0"
+							prefWidth="1004.0" BorderPane.alignment="CENTER" />
+					</children>
+				</VBox>
+			</content>
+		</ScrollPane>
+	</bottom>
 </View>

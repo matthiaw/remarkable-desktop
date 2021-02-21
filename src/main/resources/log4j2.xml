@@ -6,17 +6,14 @@
 			<PatternLayout
 				pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
 		</Console>
-		<File name="FileAppender"
-			fileName="application-${date:yyyyMMdd}.log" immediateFlush="false"
-			append="true">
-			<PatternLayout
-				pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
-		</File>
+	
+		<TextAppender name="TextAppender" />
+	
 	</Appenders>
 	<Loggers>
 		<Root level="DEBUG">
 			<AppenderRef ref="ConsoleAppender" />
-			<AppenderRef ref="FileAppender" />
+			<AppenderRef ref="TextAppender" />
 		</Root>
 	</Loggers>
 </Configuration>

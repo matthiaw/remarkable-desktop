@@ -33,6 +33,7 @@ import org.rogatio.remarkable.api.model.content.Page;
 import org.rogatio.remarkable.desktop.DrawerManager;
 import org.rogatio.remarkable.desktop.template.LabeledIcon;
 import org.rogatio.remarkable.desktop.template.LabeledImage;
+import org.rogatio.remarkable.desktop.template.TextAppender;
 
 import com.gluonhq.charm.glisten.animation.BounceInRightTransition;
 import com.gluonhq.charm.glisten.application.MobileApplication;
@@ -52,6 +53,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.TilePane;
+import javafx.scene.text.TextFlow;
 
 /**
  * The Class HomePresenter.
@@ -66,6 +68,9 @@ public class HomePresenter {
 	@FXML
 	private TilePane imagePane;
 
+	@FXML
+	private TextFlow textPane;
+
 	/** The back button node. */
 	private Button backButtonNode = MaterialDesignIcon.ARROW_BACK.button();
 
@@ -75,6 +80,9 @@ public class HomePresenter {
 	private boolean toggleView = false;
 
 	private Button zoomButton = MaterialDesignIcon.ZOOM_IN.button();
+
+	private FloatingActionButton left = null;
+	private FloatingActionButton right = null;
 
 	/**
 	 * Initialize.
@@ -96,6 +104,10 @@ public class HomePresenter {
 		clearView();
 
 		addNotebooks();
+
+//		textPane.getLineSpacing(5.0);
+		TextAppender.textFlowPane = this.textPane;
+
 	}
 
 	/**
@@ -141,7 +153,7 @@ public class HomePresenter {
 
 		appBar.getActionItems().add(zoomButton);
 
-		FloatingActionButton right = new FloatingActionButton(MaterialDesignIcon.KEYBOARD_ARROW_RIGHT.text, e -> {
+		right = new FloatingActionButton(MaterialDesignIcon.KEYBOARD_ARROW_RIGHT.text, e -> {
 			if (page.getPageNumber() + 1 < page.getNotebook().getPages().size()) {
 				try {
 					drawPage(page.getNotebook().getPage(page.getPageNumber() + 1));
@@ -149,15 +161,30 @@ public class HomePresenter {
 				}
 			}
 		});
+		right.setFloatingActionButtonHandler(FloatingActionButton.TOP_RIGHT);
 
-		FloatingActionButton left = new FloatingActionButton(MaterialDesignIcon.KEYBOARD_ARROW_LEFT.text, e -> {
+		
+		left = new FloatingActionButton(MaterialDesignIcon.KEYBOARD_ARROW_LEFT.text, e -> {
 			if (page.getPageNumber() - 1 >= 0) {
 				drawPage(page.getNotebook().getPage(page.getPageNumber() - 1));
 			}
 		});
-
+		
+//		System.out.println(page.getPageNumber());
+//		if (page.getPageNumber() == 0) {
+//			System.out.println("RIGHT");
+//			right.show();
+//			left.hide();
+//		} else if (page.getPageNumber() == page.getNotebook().getPages().size()) {
+//			System.out.println("LEFT");
+//			left.show();
+//			right.hide();
+//		} else {
+//			System.out.println("BOTH");
 		left.attachTo(right, Side.LEFT);
 		right.show();
+		
+//		}
 
 //		Button pageLeft = MaterialDesignIcon.KEYBOARD_ARROW_LEFT.button();
 //		pageLeft.setTooltip(new Tooltip("Page " + (page.getPageNumber() - 1)));
