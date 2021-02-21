@@ -32,6 +32,8 @@ import com.gluonhq.charm.glisten.visual.Swatch;
 
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 /**
@@ -40,7 +42,6 @@ import javafx.stage.Stage;
 public class Application extends MobileApplication {
 
 	// TODO Add logger as panel
-	// TODO Create Thumbnails without export
 	
 	/**
 	 * Overwrite log4j2 configuration.
@@ -64,7 +65,7 @@ public class Application extends MobileApplication {
 		}
 
 		DrawerManager.buildDrawer(this);
-
+		
 	}
 
 	/**

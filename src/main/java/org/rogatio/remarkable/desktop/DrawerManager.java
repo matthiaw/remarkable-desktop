@@ -51,6 +51,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Border;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 /**
@@ -76,7 +77,7 @@ public class DrawerManager {
 		// final Item registerItem = FxView.REGISTER.getItem();
 
 		drawer.getItems().addAll(homeItem, secondaryItem);
-
+		
 		if (Platform.isDesktop()) {
 			final Item quitItem = new Item("Quit", MaterialDesignIcon.EXIT_TO_APP.graphic());
 			quitItem.selectedProperty().addListener((obs, ov, nv) -> {
@@ -86,6 +87,7 @@ public class DrawerManager {
 			});
 			drawer.getItems().add(quitItem);
 		}
+		
 	}
 
 	/**
@@ -110,10 +112,10 @@ public class DrawerManager {
 	 * @param tooltipText the tooltip text
 	 * @return the node
 	 */
-	public static Node createDownloadIcon(String type, String tooltipText) {
+	public static Node createDownloadIcon(String type, String tooltipText, String textColor) {
 		VBox stack = new VBox();
 		Label label = new Label(type);
-		label.setStyle("-fx-text-fill: white;");
+		label.setStyle("-fx-text-fill: "+textColor+";");
 		stack.getChildren().add(label);
 		Node i = MaterialDesignIcon.FILE_DOWNLOAD.graphic();
 		i.setStyle("-fx-text-fill: white;");
@@ -201,7 +203,8 @@ public class DrawerManager {
 				}
 				ImageView imageView = new ImageView(image);
 				imageView.setFitWidth(image.getWidth());
-
+				imageView.setPreserveRatio(true);
+				
 				return imageView;
 
 			} catch (FileNotFoundException e) {

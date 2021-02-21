@@ -25,6 +25,8 @@ import com.gluonhq.charm.glisten.mvc.View;
 import com.gluonhq.charm.glisten.visual.MaterialDesignIcon;
 
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.layout.AnchorPane;
 
 /**
  * The Enum FxView.
@@ -33,22 +35,22 @@ public enum FxView {
 
 	/** The home. */
 	HOME(" Remarkable Desktop", "Home", "home", MaterialDesignIcon.HOME),
-	
+
 	/** The settings. */
 	SETTINGS("Settings View", "Settings", "settings", MaterialDesignIcon.SETTINGS),
-	
+
 	/** The register. */
 	REGISTER("Register Device", "Register", "register", MaterialDesignIcon.LAPTOP);
 
 	/** The display name. */
 	private String displayName;
-	
+
 	/** The name. */
 	private String name;
-	
+
 	/** The fxml. */
 	private String fxml;
-	
+
 	/** The icon. */
 	private MaterialDesignIcon icon;
 
@@ -56,9 +58,9 @@ public enum FxView {
 	 * Instantiates a new fx view.
 	 *
 	 * @param displayName the display name
-	 * @param name the name
-	 * @param fxml the fxml
-	 * @param icon the icon
+	 * @param name        the name
+	 * @param fxml        the fxml
+	 * @param icon        the icon
 	 */
 	private FxView(final String displayName, final String name, final String fxml, final MaterialDesignIcon icon) {
 		this.displayName = displayName;
@@ -111,6 +113,15 @@ public enum FxView {
 	public View getView() {
 		try {
 			View view = FXMLLoader.load(FxView.class.getResource(fxml + ".fxml"));
+
+//			AnchorPane pane = new AnchorPane();
+//			pane.getChildren().add(view);
+//
+//			AnchorPane.setTopAnchor(view, 0.0);
+//			AnchorPane.setRightAnchor(view, 0.0);
+//			AnchorPane.setLeftAnchor(view, 0.0);
+//			AnchorPane.setBottomAnchor(view, 0.0);
+
 			return view;
 		} catch (IOException e) {
 			System.out.println("IOException: " + e);

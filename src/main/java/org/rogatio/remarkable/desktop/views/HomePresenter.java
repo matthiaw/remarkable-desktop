@@ -18,12 +18,15 @@
 package org.rogatio.remarkable.desktop.views;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.batik.transcoder.TranscoderException;
 import org.rogatio.remarkable.api.RemarkableManager;
 import org.rogatio.remarkable.api.io.PropertiesCache;
+import org.rogatio.remarkable.api.io.file.Svg2Png;
 import org.rogatio.remarkable.api.io.file.Util;
 import org.rogatio.remarkable.api.model.content.Content;
 import org.rogatio.remarkable.api.model.content.Page;
@@ -31,21 +34,27 @@ import org.rogatio.remarkable.desktop.DrawerManager;
 import org.rogatio.remarkable.desktop.template.LabeledIcon;
 import org.rogatio.remarkable.desktop.template.LabeledImage;
 
+import com.gluonhq.charm.glisten.animation.BounceInRightTransition;
 import com.gluonhq.charm.glisten.application.MobileApplication;
 import com.gluonhq.charm.glisten.control.AppBar;
+import com.gluonhq.charm.glisten.control.FloatingActionButton;
 import com.gluonhq.charm.glisten.mvc.View;
 import com.gluonhq.charm.glisten.visual.MaterialDesignIcon;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
 
 /**
  * The Class HomePresenter.
@@ -66,11 +75,17 @@ public class HomePresenter {
 	/** The application bar. */
 	private AppBar appBar = MobileApplication.getInstance().getAppBar();
 
+	private boolean toggleView = false;
+
+	FloatingActionButton fab = new FloatingActionButton();
+
 	/**
 	 * Initialize.
 	 */
 	public void initialize() {
 		DrawerManager.setViewTitle(home, FxView.HOME);
+
+		home.setShowTransitionFactory(BounceInRightTransition::new);
 
 		home.showingProperty().addListener((obs, oldValue, newValue) -> {
 			if (newValue) {
@@ -95,10 +110,19 @@ public class HomePresenter {
 		appBar.getActionItems().clear();
 		backButtonNode.setDisable(true);
 		appBar.getActionItems().add(backButtonNode);
+		fab.hide();
 
-		Node pdf = DrawerManager.createDownloadIcon("PDF", "Download PDF of '" + content.getName() + "'");
-		DrawerManager.fileOpener(pdf, new File(exportFile(content, "pdf")));
+		File f = new File(exportFile(content, "pdf"));
+		boolean disable = false;
+		if (!f.exists()) {
+			disable = true;
+		}
+
+		Node pdf = DrawerManager.createDownloadIcon("PDF", "Download PDF of '" + content.getName() + "'", "white");
+		pdf.setDisable(disable);
+		DrawerManager.fileOpener(pdf, f);
 		appBar.getActionItems().add(pdf);
+
 	}
 
 	/**
@@ -148,15 +172,36 @@ public class HomePresenter {
 		});
 		appBar.getActionItems().add(pageRight);
 
-		Node svg = DrawerManager.createDownloadIcon("SVG", "Download SVG of Page " + page.getPageNumber());
-		DrawerManager.fileOpener(svg, new File(Util.getFilename(page, "svg")));
+		File f = new File(Util.getFilename(page, "svg"));
+		boolean disable = false;
+		if (!f.exists()) {
+			disable = true;
+		}
+
+		Node svg = DrawerManager.createDownloadIcon("SVG", "Download SVG of Page " + page.getPageNumber(), "white");
+		svg.setDisable(disable);
+		DrawerManager.fileOpener(svg, f);
 		appBar.getActionItems().add(svg);
 
-		Node png = DrawerManager.createDownloadIcon("PNG", "Download PNG of Page " + page.getPageNumber());
+		f = new File(Util.getFilename(page, "png"));
+		disable = false;
+		if (!f.exists()) {
+			disable = true;
+		}
+
+		Node png = DrawerManager.createDownloadIcon("PNG", "Download PNG of Page " + page.getPageNumber(), "white");
+		png.setDisable(disable);
 		DrawerManager.fileOpener(png, new File(Util.getFilename(page, "png")));
 		appBar.getActionItems().add(png);
 
-		Node pdf = DrawerManager.createDownloadIcon("PDF", "Download PDF of Page " + page.getPageNumber());
+		f = new File(Util.getFilename(page, "pdf"));
+		disable = false;
+		if (!f.exists()) {
+			disable = true;
+		}
+
+		Node pdf = DrawerManager.createDownloadIcon("PDF", "Download PDF of Page " + page.getPageNumber(), "white");
+		pdf.setDisable(disable);
 		DrawerManager.fileOpener(pdf, new File(Util.getFilename(page, "pdf")));
 		appBar.getActionItems().add(pdf);
 	}
@@ -190,6 +235,7 @@ public class HomePresenter {
 		appBar.getActionItems().clear();
 		backButtonNode.setDisable(true);
 		appBar.getActionItems().add(backButtonNode);
+		fab.hide();
 	}
 
 	/**
@@ -220,6 +266,7 @@ public class HomePresenter {
 			RemarkableManager.getInstance().readNotebookMetaDatas();
 			RemarkableManager.getInstance().downloadContents();
 			RemarkableManager.getInstance().readContents();
+			RemarkableManager.getInstance().exportNotebookThumbnails(false);
 			addNotebooks();
 		}));
 
@@ -230,6 +277,8 @@ public class HomePresenter {
 	 */
 	private void clearView() {
 		imagePane.getChildren().clear();
+//		VBox.setVgrow(home, Priority.ALWAYS);
+//		VBox.setVgrow(imagePane, Priority.ALWAYS);	
 	}
 
 	/**
@@ -350,8 +399,40 @@ public class HomePresenter {
 
 		addNavSingle(page);
 
+		if (toggleView) {
+			fab = new FloatingActionButton(MaterialDesignIcon.ZOOM_OUT.text, e -> {
+				toggleView = !toggleView;
+				drawPage(page);
+			});
+		} else {
+			fab = new FloatingActionButton(MaterialDesignIcon.ZOOM_IN.text, e -> {
+				toggleView = !toggleView;
+				drawPage(page);
+			});
+		}
+		fab.show();
+		
 		File imgFile = page.getPng();
+
+		if (imgFile == null) {
+			double scale = PropertiesCache.getInstance().getDouble(PropertiesCache.PNGEXPORTSCALE);
+			try {
+				Svg2Png.createPngFromFile(page, scale);
+			} catch (TranscoderException e) {
+			} catch (IOException e) {
+			}
+			imgFile = page.getPng();
+		}
+
 		ImageView iv = DrawerManager.createImageView(imgFile, 750);
+
+		if (toggleView) {
+			iv.fitWidthProperty().bind(imagePane.widthProperty());
+//			iv.fitHeightProperty().bind(imagePane.heightProperty());
+		} else {
+			iv.fitWidthProperty().bind(home.widthProperty());
+			iv.fitHeightProperty().bind(home.heightProperty());	
+		}
 
 		imagePane.getChildren().clear();
 		imagePane.getChildren().add(iv);
