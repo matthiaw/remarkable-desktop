@@ -45,19 +45,13 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Side;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Tooltip;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.TilePane;
-import javafx.scene.layout.VBox;
 
 /**
  * The Class HomePresenter.
@@ -80,7 +74,7 @@ public class HomePresenter {
 
 	private boolean toggleView = false;
 
-	FloatingActionButton fab = new FloatingActionButton();
+	private Button zoomButton = MaterialDesignIcon.ZOOM_IN.button();
 
 	/**
 	 * Initialize.
@@ -112,8 +106,9 @@ public class HomePresenter {
 	private void addNavSingle(Content content) {
 		appBar.getActionItems().clear();
 		backButtonNode.setDisable(true);
+		zoomButton.setDisable(true);
 		appBar.getActionItems().add(backButtonNode);
-		fab.hide();
+		appBar.getActionItems().add(zoomButton);
 
 		File f = new File(exportFile(content, "pdf"));
 		boolean disable = false;
@@ -138,42 +133,68 @@ public class HomePresenter {
 		backButtonNode.setDisable(true);
 		appBar.getActionItems().add(backButtonNode);
 
-		Button pageLeft = MaterialDesignIcon.KEYBOARD_ARROW_LEFT.button();
-		pageLeft.setTooltip(new Tooltip("Page " + (page.getPageNumber() - 1)));
-		pageLeft.setOnMouseClicked(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent mouseEvent) {
-				if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-					if (page.getPageNumber() - 1 >= 0) {
-						drawPage(page.getNotebook().getPage(page.getPageNumber() - 1));
-					} else {
-						pageLeft.setDisable(true);
-					}
+		if (toggleView) {
+			zoomButton = MaterialDesignIcon.ZOOM_OUT.button();// . .setText(MaterialDesignIcon.ZOOM_OUT.text);
+		} else {
+			zoomButton = MaterialDesignIcon.ZOOM_IN.button();// . .setText(MaterialDesignIcon.ZOOM_OUT.text);
+		}
+
+		appBar.getActionItems().add(zoomButton);
+
+		FloatingActionButton right = new FloatingActionButton(MaterialDesignIcon.KEYBOARD_ARROW_RIGHT.text, e -> {
+			if (page.getPageNumber() + 1 < page.getNotebook().getPages().size()) {
+				try {
+					drawPage(page.getNotebook().getPage(page.getPageNumber() + 1));
+				} catch (Exception ex) {
 				}
 			}
 		});
-		appBar.getActionItems().add(pageLeft);
 
-		Button pageRight = MaterialDesignIcon.KEYBOARD_ARROW_RIGHT.button();
-		pageRight.setTooltip(new Tooltip("Page " + (page.getPageNumber() + 1)));
-		pageRight.setOnMouseClicked(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent mouseEvent) {
-				if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-
-					if (page.getPageNumber() + 1 < page.getNotebook().getPages().size()) {
-						try {
-							drawPage(page.getNotebook().getPage(page.getPageNumber() + 1));
-						} catch (Exception e) {
-						}
-					} else {
-						pageRight.setDisable(true);
-					}
-
-				}
+		FloatingActionButton left = new FloatingActionButton(MaterialDesignIcon.KEYBOARD_ARROW_LEFT.text, e -> {
+			if (page.getPageNumber() - 1 >= 0) {
+				drawPage(page.getNotebook().getPage(page.getPageNumber() - 1));
 			}
 		});
-		appBar.getActionItems().add(pageRight);
+
+		left.attachTo(right, Side.LEFT);
+		right.show();
+
+//		Button pageLeft = MaterialDesignIcon.KEYBOARD_ARROW_LEFT.button();
+//		pageLeft.setTooltip(new Tooltip("Page " + (page.getPageNumber() - 1)));
+//		pageLeft.setOnMouseClicked(new EventHandler<MouseEvent>() {
+//			@Override
+//			public void handle(MouseEvent mouseEvent) {
+//				if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+//					if (page.getPageNumber() - 1 >= 0) {
+//						drawPage(page.getNotebook().getPage(page.getPageNumber() - 1));
+//					} else {
+//						pageLeft.setDisable(true);
+//					}
+//				}
+//			}
+//		});
+//		appBar.getActionItems().add(pageLeft);
+//
+//		Button pageRight = MaterialDesignIcon.KEYBOARD_ARROW_RIGHT.button();
+//		pageRight.setTooltip(new Tooltip("Page " + (page.getPageNumber() + 1)));
+//		pageRight.setOnMouseClicked(new EventHandler<MouseEvent>() {
+//			@Override
+//			public void handle(MouseEvent mouseEvent) {
+//				if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+//
+//					if (page.getPageNumber() + 1 < page.getNotebook().getPages().size()) {
+//						try {
+//							drawPage(page.getNotebook().getPage(page.getPageNumber() + 1));
+//						} catch (Exception e) {
+//						}
+//					} else {
+//						pageRight.setDisable(true);
+//					}
+//
+//				}
+//			}
+//		});
+//		appBar.getActionItems().add(pageRight);
 
 		File f = new File(Util.getFilename(page, "svg"));
 		boolean disable = false;
@@ -237,8 +258,9 @@ public class HomePresenter {
 	private void addNavSingle() {
 		appBar.getActionItems().clear();
 		backButtonNode.setDisable(true);
+		zoomButton.setDisable(true);
 		appBar.getActionItems().add(backButtonNode);
-		fab.hide();
+		appBar.getActionItems().add(zoomButton);
 	}
 
 	/**
@@ -400,20 +422,44 @@ public class HomePresenter {
 
 		addNavSingle(page);
 
+		zoomButton.setDisable(false);
 		// add toggle view button
 		if (toggleView) {
-			fab = new FloatingActionButton(MaterialDesignIcon.ZOOM_OUT.text, e -> {
-				toggleView = !toggleView;
-				drawPage(page);
+
+//			zoomButton = MaterialDesignIcon.ZOOM_OUT.button();//. .setText(MaterialDesignIcon.ZOOM_OUT.text);
+			zoomButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent mouseEvent) {
+					if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+						toggleView = !toggleView;
+						drawPage(page);
+					}
+				}
 			});
+
+//			zoomButton = new FloatingActionButton(MaterialDesignIcon.ZOOM_OUT.text, e -> {
+//				toggleView = !toggleView;
+//				drawPage(page);
+//			});
+
 		} else {
-			fab = new FloatingActionButton(MaterialDesignIcon.ZOOM_IN.text, e -> {
-				toggleView = !toggleView;
-				drawPage(page);
+//			fab = new FloatingActionButton(MaterialDesignIcon.ZOOM_IN.text, e -> {
+//				toggleView = !toggleView;
+//				drawPage(page);
+//			});
+//			zoomButton = MaterialDesignIcon.ZOOM_IN.button(); //.setText(MaterialDesignIcon.ZOOM_IN.text);
+			zoomButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent mouseEvent) {
+					if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+						toggleView = !toggleView;
+						drawPage(page);
+					}
+				}
 			});
 		}
 
-		fab.show();
+//		fab.show();
 
 		File imgFile = page.getPng();
 
@@ -441,7 +487,7 @@ public class HomePresenter {
 //		pane.setLeft(new Label("Left"));
 //		pane.setCenter(iv);
 //		pane.setRight(new Label("Right"));
-		
+
 		imagePane.getChildren().clear();
 		imagePane.getChildren().add(iv);
 
