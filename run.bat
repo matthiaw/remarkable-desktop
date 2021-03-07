@@ -1,0 +1,1 @@
+java --module-path "C:\Programme\Java\javafx-sdk-11.0.2\lib" --add-modules javafx.controls,javafx.fxml -jar remarkable-desktop.jar %1
